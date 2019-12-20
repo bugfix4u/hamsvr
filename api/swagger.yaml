@@ -1,0 +1,327 @@
+swagger: "2.0"
+info:
+  description: "Defines the API's for the example Home Asset Manager API server"
+  version: "1.0.0"
+  title: "Home Asset Manager API"
+  contact:
+    email: "dchambers@bugfixer.net"
+  license:
+    name: "GPL v3"
+    url: "http://www.gnu.org/licenses/gpl-3.0.html"
+host: "localhost"
+basePath: "/"
+tags:
+- name: "asset"
+  description: "Operations for Assets"
+
+schemes:
+- "http"
+paths:
+  /assets:
+    get:
+      tags:
+      - "asset"
+      summary: "Get all assets"
+      description: ""
+      operationId: "getAssets"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/assetpage"
+    post:
+      tags:
+      - "asset"
+      summary: "Add a new asset to the DB"
+      description: ""
+      operationId: "addAsset"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Asset that needs to be added to the DB"
+        required: true
+        schema:
+          $ref: "#/definitions/createasset"
+      responses:
+        201:
+          description: "Created"
+          schema:
+              $ref: "#/definitions/asset"
+        400:
+          description: "Invalid JSON format"
+          schema:
+              $ref: "#/definitions/errorresponse"
+        405:
+          description: "Invalid input"
+          schema:
+              $ref: "#/definitions/errorresponse"
+            
+  /asset/{id}:
+    get:
+      tags:
+      - "asset"
+      summary: "Get an asset by id"
+      description: ""
+      operationId: "getAssetById"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "id of the asset to return"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "OK"
+          schema:
+              $ref: "#/definitions/asset"
+        400:
+          description: "Invalid ID"
+          schema:
+              $ref: "#/definitions/errorresponse"
+        404:
+          description: "Asset not found"
+    put:
+      tags:
+      - "asset"
+      summary: "Modify an asset in the DB"
+      description: ""
+      operationId: "modifyAssetById"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "id of the asset to return"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "Asset that needs to be modified in the DB"
+        required: true
+        schema:
+          $ref: "#/definitions/createasset"
+      responses:
+        200:
+          description: "OK"
+          schema:
+              $ref: "#/definitions/asset"
+        400:
+          description: "Invalid ID or Invalid JSON format"
+          schema:
+              $ref: "#/definitions/errorresponse"
+        404:
+          description: "Asset not found"
+        405:
+          description: "Invalid input"
+          schema:
+              $ref: "#/definitions/errorresponse"
+    delete:
+      tags:
+      - "asset"
+      summary: "Delete Asset"
+      description: ""
+      operationId: "deleteAssetById"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "Asset id that needs to be deleted"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "OK"
+        400:
+          description: "Invalid ID"
+          schema:
+              $ref: "#/definitions/errorresponse"
+definitions:
+  asset:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+        format: "uuid"
+      name:
+        type: "string"
+        format: "utf-8"
+      manufacturer:
+        type: "string"
+        format: "text"
+      model:
+        type: "string"
+        format: "text"
+      serialId:
+        type: "string"
+        format: "text"
+      purchasePrice:
+        type: "number"
+        format: "double"
+      location:
+        type: "string"
+        format: "text"
+      description:
+        type: "string"
+        format: "text"
+      tags:
+        type: "string"
+        format: "text"
+  createasset:
+    type: "object"
+    properties:
+      name:
+        type: "string"
+        format: "utf-8"
+      manufacturer:
+        type: "string"
+        format: "text"
+      model:
+        type: "string"
+        format: "text"
+      serialId:
+        type: "string"
+        format: "text"
+      purchasePrice:
+        type: "number"
+        format: "double"
+      location:
+        type: "string"
+        format: "text"
+      description:
+        type: "string"
+        format: "text"
+      tags:
+        type: "string"
+        format: "text"
+    required:
+    - "name"
+    - "serialId"
+  assetpage:
+    type: "object"
+    properties:
+      content:
+        type: "array"
+        items:
+          $ref: "#/definitions/asset"
+      pageable:
+        $ref: "#/definitions/pagable"
+      totalPages:
+        type: "integer"
+      totalElements:
+        type: "integer"
+      last:
+        type: "boolean"
+      sort:
+        $ref: "#/definitions/sort"
+      numberOfElements:
+        type: "integer"
+      first:
+        type: "boolean"
+      size:
+        type: "integer"
+      number:
+        type: "integer"
+      empty:
+        type: "boolean"
+  pagable:
+    type: "object"
+    properties:
+      sort:
+        $ref: "#/definitions/sort"
+      pageNumber:
+        type: "integer"
+      pageSize:
+        type: "integer"
+      offset:
+        type: "integer"
+      unpaged:
+        type: "boolean"
+      paged:
+        type: "boolean"
+  sort:
+    type: "object"
+    properties:
+      sorted:
+        type: "boolean"
+      unsorted:
+        type: "boolean"
+      empty:
+        type: "boolean"
+  errorresponse:
+    type: "object"
+    properties:
+      timestamp:
+        type: "string"
+        format: "date-time"
+      status:
+        type: "integer"
+      error:
+        type: "string"
+        format: "text"
+      errors: 
+        type: "array"
+        items:
+          $ref: "#/definitions/error"
+      defaultMessage:
+        type: "string"
+        format: "text"
+      objectName:
+        type: "string"
+        format: "text"
+      field:
+        type: "string"
+        format: "text"
+      rejectedValue:
+        type: "string"
+        format: "text"
+      bindingFailure:
+        type: "boolean"
+      code:
+        type: "string"
+        format: "text"
+      message:
+        type: "string"
+        format: "text"
+      path:
+        type: "string"
+        format: "text"
+  error:
+    type: "object"
+    properties:
+      codes:
+        type: "array"
+        items:
+          type: "string"
+          format: "text"
+      arguments:
+        type: "object"
+        properties:
+          codes:
+            type: "array"
+            items:
+              type: "string"
+              format: "text"
+          arguments:
+            type: "string"
+            format: "text"
+          defaultMessage:
+            type: "string"
+            format: "text"
+          code:
+            type: "string"
+            format: "text"
+
+externalDocs:
+  description: "Find out more about Swagger"
+  url: "http://swagger.io"

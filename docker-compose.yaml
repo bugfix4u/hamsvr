@@ -1,0 +1,35 @@
+version: '3.6'
+
+networks:
+   ham-network:
+      name: "ham-network"
+      driver: "bridge"
+
+services:
+   ham-postgres:
+      image: postgres:12.1
+      container_name: ham-postgres
+      hostname: ham-postgres
+      tty: true
+      stdin_open: true
+      restart: always
+      networks:
+         - ham-network
+      environment:
+         POSTGRES_DB: hamdb
+         POSTGRES_USER: hamuser
+         POSTGRES_PASSWORD: H1r3M3N0W
+      ports:
+         - 5432:5432
+
+   ham-apisvr:
+      build: .
+      container_name: ham-apisvr
+      hostname: ham-apisvr
+      tty: true
+      stdin_open: true
+      restart: always
+      networks:
+         - ham-network
+      ports:
+         - 8080:8080
